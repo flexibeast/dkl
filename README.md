@@ -1,4 +1,4 @@
-# display-keyboard-layout - Display keyboard layout
+# dkl - Display keyboard layout
 
 *Author:* Alexis <flexibeast@gmail.com><br>
 *URL:* [https://github.com/flexibeast/dkl](https://github.com/flexibeast/dkl)<br>
@@ -16,7 +16,7 @@
 
 ## Installation
 
-Install [dkl from MELPA](http://melpa.org/#/ewmctrl), or put the `dkl` directory in your load-path and do a `(require 'display-keyboard-layout)'.
+Install [dkl from MELPA](http://melpa.org/#/ewmctrl), or put the `dkl` directory in your load-path and do a `(require 'display-keyboard-layout)`.
 
 ## Usage
 
