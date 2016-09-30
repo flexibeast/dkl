@@ -30,6 +30,8 @@
 
 ;; `dkl' provides an ASCII-art representation of a keyboard layout, within an Emacs buffer.
 
+;; <img src="screencap.png">
+
 ;; ## Table of Contents
 
 ;; - [Installation](#installation)
