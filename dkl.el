@@ -99,8 +99,6 @@
 ;;; Code:
 
 
-(require 'cl-lib)
-
 (defvar dkl-mode-map (make-sparse-keymap)
   "Keymap for `dkl'.")
 
@@ -207,7 +205,7 @@ Derived from the value of `dkl--current-layout' by `dkl--refresh'.")
     (setq dkl--reverse-current-layout-shifted
           (append '()
                   (mapcar (lambda (entry)
-                            (cons (cl-caddr entry) (car entry)))
+                            (cons (car (cddr entry)) (car entry)))
                           dkl--current-layout)))
     (with-current-buffer "*dkl-layout*"
       (erase-buffer)
@@ -215,7 +213,7 @@ Derived from the value of `dkl--current-layout' by `dkl--refresh'.")
       (dolist (entry dkl--current-layout)
         (let ((glyph (if (not dkl--shifted)
                          (cadr entry)
-                       (cl-caddr entry))))
+                       (car (cddr entry)))))
           (goto-char (car entry))
           (delete-char 1)
           (insert glyph)))
