@@ -1,4 +1,4 @@
-;;; display-keyboard-layout.el --- Display keyboard layout.
+;;; dkl.el --- Display keyboard layout.
 
 ;; Copyright (C) 2016  Alexis <flexibeast@gmail.com>
 
