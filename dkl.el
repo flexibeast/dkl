@@ -107,6 +107,7 @@
 (define-derived-mode dkl-mode special-mode "dkl"
   "Major mode for displaying keyboard layout."
   (read-only-mode)
+  (setq-local bidi-paragraph-direction 'left-to-right)
   (setq-local cursor-type nil)
   (define-key dkl-mode-map (kbd "q") 'dkl-close)
   (define-key dkl-mode-map (kbd "s") 'dkl-shift-toggle))
@@ -212,7 +213,7 @@ Derived from the value of `dkl--current-layout' by `dkl--refresh'.")
                           dkl--current-layout)))
     (with-current-buffer "*dkl-layout*"
       (erase-buffer)
-      (insert-file-contents-literally (concat dkl--elisp-dir "keyboards/" dkl-keyboard-name))
+      (insert-file-contents (concat dkl--elisp-dir "keyboards/" dkl-keyboard-name))
       (dolist (entry dkl--current-layout)
         (let ((glyph (if (not dkl--shifted)
                          (cadr entry)
