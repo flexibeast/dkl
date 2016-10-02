@@ -107,6 +107,7 @@
 (define-derived-mode dkl-mode special-mode "dkl"
   "Major mode for displaying keyboard layout."
   (read-only-mode)
+  (setq-local cursor-type nil)
   (define-key dkl-mode-map (kbd "q") 'dkl-close)
   (define-key dkl-mode-map (kbd "s") 'dkl-shift-toggle))
 
