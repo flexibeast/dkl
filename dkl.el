@@ -184,7 +184,7 @@ The value of this variable is initialised by `dkl--refresh'.")
   (let ((glyph (key-description (this-command-keys-vector))))
     (with-current-buffer "*dkl-layout*"
       (goto-char (point-min))
-      (if (re-search-forward glyph (point-max) t)
+      (if (search-forward glyph (point-max) t)
           (let ((pos (match-beginning 0))
                 (inhibit-read-only t))
             (add-text-properties (- pos 1) (+ pos 2) (list 'face 'dkl-glyph-highlight-face))
