@@ -134,15 +134,9 @@
 
 The value of this variable is initialised by `dkl--refresh'.")
 
-(defvar dkl--reverse-current-layout-shifted '()
-  "An alist mapping shifted glyphs to keyboard layout positions.
 
-Derived from the value of `dkl--current-layout' by `dkl--refresh'.")
 
-(defvar dkl--reverse-current-layout-unshifted '()
-  "An alist mapping unshifted glyphs to keyboard layout positions.
 
-Derived from the value of `dkl--current-layout' by `dkl--refresh'.")
 
 (defvar dkl--shifted nil
   "Whether or not shifted layout should be displayed.")
@@ -187,39 +181,21 @@ Derived from the value of `dkl--current-layout' by `dkl--refresh'.")
 
 (defun dkl--highlight-typed-glyph ()
   "Highlight the last-typed glyph in the *dkl-layout* buffer."
-  (let ((glyph (key-description (this-command-keys-vector)))
-        (match nil))
-    (if (and (not dkl--shifted)
-             (assoc glyph dkl--reverse-current-layout-unshifted))
-        (setq match 'unshifted))
-    (if (and dkl--shifted
-             (assoc glyph dkl--reverse-current-layout-shifted))
-        (setq match 'shifted))
-    (if match
-        (let* ((pos (if (eq match 'unshifted)
-                        (cdr (assoc glyph dkl--reverse-current-layout-unshifted))
-                      (cdr (assoc glyph dkl--reverse-current-layout-shifted)))))
-          (with-current-buffer "*dkl-layout*"
-            (let ((inhibit-read-only t))
-              (add-text-properties (- pos 1) (+ pos 2) (list 'face 'dkl-glyph-highlight-face))
-              (sit-for dkl-highlight-duration)
-              (remove-text-properties (- pos 1) (+ pos 2) (list 'face))))))))
+  (let ((glyph (key-description (this-command-keys-vector))))
+    (with-current-buffer "*dkl-layout*"
+      (goto-char (point-min))
+      (if (re-search-forward glyph (point-max) t)
+          (let ((pos (match-beginning 0))
+                (inhibit-read-only t))
+            (add-text-properties (- pos 1) (+ pos 2) (list 'face 'dkl-glyph-highlight-face))
+            (sit-for dkl-highlight-duration)
+            (remove-text-properties (- pos 1) (+ pos 2) (list 'face)))))))
 
 (defun dkl--refresh ()
   "Refresh contents of *dkl-layout* buffer."
   (let ((bfr (get-buffer-create "*dkl-layout*"))
         (inhibit-read-only t))
     (load (concat dkl--elisp-dir "layouts/" dkl-layout-name))
-    (setq dkl--reverse-current-layout-unshifted
-          (append '()
-                  (mapcar (lambda (entry)
-                            (cons (cadr entry) (car entry)))
-                          dkl--current-layout)))
-    (setq dkl--reverse-current-layout-shifted
-          (append '()
-                  (mapcar (lambda (entry)
-                            (cons (car (cddr entry)) (car entry)))
-                          dkl--current-layout)))
     (with-current-buffer "*dkl-layout*"
       (erase-buffer)
       (insert-file-contents (concat dkl--elisp-dir "keyboards/" dkl-keyboard-name))
