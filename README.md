@@ -26,9 +26,11 @@ Create an `dkl-layout` buffer with <kbd>M-x dkl-display</kbd>.
 
 Within the `dkl-layout` buffer, the default keybindings are:
 
-* s - Toggle display of shifted and unshifted layouts.
+* l - Set the layout to use (`dkl-set-current-layout`).
 
-* q - Close the `dkl-layout` buffer and window.
+* q - Close the `dkl-layout` buffer and window (`dkl-close`).
+
+* s - Toggle display of shifted and unshifted layouts (`dkl-shift-toggle`).
 
 Customisation options, including how `dkl` highlights typed keys, are available via the `dkl` customize-group.
 
@@ -36,7 +38,13 @@ Customisation options, including how `dkl` highlights typed keys, are available 
 
 ## Layout file format
 
-A layout file contains Emacs Lisp which ensures the layout is used with the correct keyboard, followed by the setting of the `dkl--current-layout` variable:
+A layout file contains Emacs Lisp which:
+
+* ensures the layout is used with the correct keyboard; and
+
+* sets the `dkl--current-layout` variable.
+
+For example:
 
 ```elisp
 (if (not (string= dkl-keyboard-name "standard"))
