@@ -109,6 +109,7 @@
   (read-only-mode)
   (setq-local bidi-paragraph-direction 'left-to-right)
   (setq-local cursor-type nil)
+  (define-key dkl-mode-map (kbd "l") 'dkl-set-current-layout)
   (define-key dkl-mode-map (kbd "q") 'dkl-close)
   (define-key dkl-mode-map (kbd "s") 'dkl-shift-toggle))
 
