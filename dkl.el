@@ -241,8 +241,8 @@ Derived from the value of `dkl--current-layout' by `dkl--refresh'.")
 ;; User-facing functions.
 ;;
 
-(defun dkl-change-current-layout (layout)
-  "Change the layout displayed for this session."
+(defun dkl-set-current-layout (layout)
+  "Set the layout displayed in this session."
   (interactive
    (list
     (completing-read "Layout: "
