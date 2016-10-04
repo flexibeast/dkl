@@ -147,9 +147,18 @@
 
 The value of this variable is initialised by `dkl--refresh'.")
 
+(defvar dkl--current-layout-script-direction 'left-to-right
+  "The directionality of the script in the current layout.
 
+Possible values are the symbols `left-to-right' or `right-to-left'.")
 
+(defvar dkl--position-adjustment 0
+  "Number of characters by which to adjust glyph positions.
 
+The value of this variable will be 0 for left-to-right scripts,
+and a positive number for right-to-left scripts. The latter
+is used to ensure that the displayed layout is flush-right in
+the *dkl-layout* window.")
 
 (defvar dkl--shifted nil
   "Whether or not shifted layout should be displayed.")
@@ -192,6 +201,20 @@ The value of this variable is initialised by `dkl--refresh'.")
 ;; Internal functions.
 ;;
 
+(defun dkl--get-keyboard-width ()
+  "Return width, in characters, of current keyboard."
+  (with-temp-buffer
+    (insert-file-contents (concat dkl--elisp-dir "keyboards/" dkl-keyboard-name))
+    (goto-char (point-min))
+    (let ((width (- (line-end-position) (line-beginning-position))))
+      (while (not (eobp))
+        (progn
+          (forward-line)
+          (let ((current-width (- (line-end-position) (line-beginning-position))))
+            (if (> current-width width)
+                (setq width current-width)))))
+      width)))
+
 (defun dkl--highlight-typed-glyph ()
   "Highlight the last-typed glyph in the *dkl-layout* buffer."
   (let ((glyph (key-description (this-command-keys-vector))))
@@ -212,13 +235,27 @@ The value of this variable is initialised by `dkl--refresh'.")
     (with-current-buffer "*dkl-layout*"
       (erase-buffer)
       (insert-file-contents (concat dkl--elisp-dir "keyboards/" dkl-keyboard-name))
-      (dolist (entry dkl--current-layout)
-        (let ((glyph (if (not dkl--shifted)
-                         (cadr entry)
-                       (car (cddr entry)))))
-          (goto-char (car entry))
-          (delete-char 1)
-          (insert glyph)))
+      (if (eq dkl--current-layout-script-direction 'right-to-left)
+          (setq dkl--position-adjustment (1+ (- (window-width) (dkl--get-keyboard-width))))
+        (setq dkl--position-adjustment 0))
+      (set-left-margin (point-min) (point-max) dkl--position-adjustment)
+      (let ((row-count 1))
+        (dolist (layout-entry dkl--current-layout)
+          (let ((row (cdr (assoc (car layout-entry) dkl--current-layout)))
+                (row-position (car layout-entry)))
+            (dolist (row-entry row)
+              (let* ((glyph (if (not dkl--shifted)
+                                (cadr row-entry)
+                              (car (cddr row-entry))))
+                     (position (car row-entry))
+                     (adjusted-position (+ (* (* 2 row-count)
+                                              dkl--position-adjustment)
+                                           row-position
+                                           position)))
+                (goto-char adjusted-position)
+                (delete-char 1)
+                (insert glyph)))
+            (setq row-count (1+ row-count)))))
       (dkl-mode))
     (if (get-buffer-window "*dkl-layout*")
         (with-selected-window (get-buffer-window "*dkl-layout*")
