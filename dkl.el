@@ -65,7 +65,9 @@
 
 ;; A layout file contains Emacs Lisp which:
 
-;; * ensures the layout is used with the correct keyboard; and
+;; * ensures the layout is used with the correct keyboard;
+
+;; * specifies the directionality of the script used in the layout; and
 
 ;; * sets the `dkl--current-layout` variable.
 
@@ -74,13 +76,24 @@
 ;; ```elisp
 ;; (if (not (string= dkl-keyboard-name "standard"))
 ;;     (user-error "Layout `qwerty-us' must be used with `dkl-keyboard-name' set to \"standard\"")
-;;   (setq dkl--current-layout
-;;         ;; Top row
-;;         '((57 . ("`" "~"))
-;;         ...
+;;   (progn
+;;     (setq dkl--current-layout-script-direction 'left-to-right)
+;;     (setq dkl--current-layout
+;;           '(;; Top row
+;;             (60 . ((0 . ("`" "~"))
+;;                    (4 . ("1" "!"))
+;;             ...
 ;; ```
 
-;; The layout data structure consists of an alist, where the `car` of each entry indicates a character position in the relevant keyboard file, and the `cdr` contains a list of the unshifted and shifted glyphs to display at that position in a `*dkl-layout*` buffer.
+;; The layout data structure is an alist. Each entry in the alist represents a keyboard row:
+
+;; * The `car` of the entry indicates the character position for the first glyph in that row.
+
+;; * The `cdr` of the entry is itself an alist, where:
+
+;;   * the `car` of each entry is an offset, in characters, from the first glyph in that row;
+
+;;   * the `cdr` of each entry is a list of the unshifted and shifted glyphs to display.
 
 ;; ## TODO
 
